@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Zapatos</title>
+    <style>
+        /* General styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Login y Registro */
+        .login, .registro {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #e8e8e8;
+        }
+        .login-form, .register-form {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        .login h2, .registro h2 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        .login form, .register form {
+            display: flex;
+            flex-direction: column;
+        }
+        .login input, .registro input {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .btn {
+            background: #ff6347;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .btn:hover {
+            background: #e25342;
+        }
+
+        /* Productos y Carrito */
+        .productos, .carrito {
+            padding: 50px 20px;
+            text-align: center;
+        }
+        .productos h2, .carrito h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .producto-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        .producto {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+        }
+        .producto img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .producto h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .producto p {
+            color: #ff6347;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        .producto .agregar {
+            background: #ff6347;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+        .producto .agregar:hover {
+            background: #e25342;
+        }
+
+        /* Carrito tabla */
+        .tabla-carrito {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto 20px auto;
+            border-collapse: collapse;
+        }
+        .tabla-carrito th,
+        .tabla-carrito td {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .tabla-carrito th {
+            background: #f0f0f0;
+        }
+        .btn-eliminar {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .btn-eliminar:hover {
+            background: #555;
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+        footer p {
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Página de Login -->
+    <section id="login" class="login">
+        <div class="login-form">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <label for="loginUsuario">Usuario</label>
+                <input type="text" id="loginUsuario" name="usuario" required>
+
+                <label for="loginContrasena">Contraseña</label>
+                <input type="password" id="loginContrasena" name="contrasena" required>
+
+                <button type="submit" class="btn">Ingresar</button>
+            </form>
+            <p>¿No tienes cuenta? <a href="javascript:void(0);" onclick="showRegister()">Regístrate aquí</a></p>
+        </div>
+    </section>
+
+    <!-- Página de Registro -->
+    <section id="registro" class="registro" style="display:none;">
+        <div class="register-form">
+            <h2>Registro de Usuario</h2>
+            <form id="registerForm">
+                <label for="usuario">Usuario</label>
+                <input type="text" id="usuario" name="usuario" required>
+
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+
+                <button type="submit" class="btn">Registrar</button>
+            </form>
+            <p>¿Ya tienes cuenta? <a href="javascript:void(0);" onclick="showLogin()">Inicia sesión aquí</a></p>
+        </div>
+    </section>
+
+    <!-- Sección de Bienvenida -->
+    <section id="home" class="welcome" style="display:none; text-align:center; padding:60px 20px;">
+        <h2>Bienvenido a la tienda de zapatos</h2>
+        <p>Descubre tu próximo par de zapatos favoritos.</p>
+        <button class="btn" onclick="showProductos()">Ver Productos</button>
+    </section>
+
+    <!-- Productos -->
+    <section id="productos" class="productos" style="display:none;">
+        <h2>Productos destacados</h2>
+        <button class="btn" onclick="mostrarCarrito()">Ver carrito</button>
+        <br><br>
+        <div class="producto-lista" id="productoLista">
+            <!-- Los productos serán cargados dinámicamente con JS -->
+        </div>
+    </section>
+
+    <!-- Carrito -->
+    <section id="carrito" class="carrito" style="display:none;">
+        <h2>Carrito de Compras</h2>
+        <div id="productosCarrito"></div>
+        <button class="btn" onclick="finalizarCompra()">Finalizar Compra</button>
+    </section>
+
+    <footer id="contacto">
+        <p>&copy; 2025 Tienda de Zapatos. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Datos de productos
+        const productos = [
+            { id: 1, nombre: 'Zapatos air force 1',      precio: 45, imagen: 'accest/AIRFORCE1.jpg' },
+            { id: 2, nombre: 'Dunk Panda Low',           precio: 55, imagen: 'accest/dunk.jpg' },
+            { id: 3, nombre: 'Jordan 1 Retro Chicago',   precio: 60, imagen: 'accest/jordan 1.jpg' },
+            { id: 4, nombre: 'Jordan 4 Black Cat',       precio: 50, imagen: 'accest/jordan4.jpg' },
+            { id: 5, nombre: 'Jordan Retro 11',          precio: 70, imagen: 'accest/jordan11.jpg' },
+            { id: 6, nombre: 'Nike SB Dunk Low',         precio: 75, imagen: 'accest/nikeSB.jpg' }
+        ];
+
+        // Carrito: cada elemento tendrá {id, nombre, precio, imagen, cantidad}
+        let carrito = [];
+
+        // Mostrar productos
+        function showProductos() {
+            let productosHTML = '';
+            productos.forEach(producto => {
+                productosHTML += `
+                    <div class="producto">
+                        <img src="${producto.imagen}" alt="${producto.nombre}">
+                        <h3>${producto.nombre}</h3>
+                        <p>$${producto.precio}</p>
+                        <button class="agregar" onclick="agregarAlCarrito(${producto.id})">Agregar al carrito</button>
+                    </div>
+                `;
+            });
+            document.getElementById('productoLista').innerHTML = productosHTML;
+            document.getElementById('productos').style.display = 'block';
+            document.getElementById('home').style.display = 'none';
+        }
+
+        // Mostrar carrito (sección)
+        function mostrarCarrito() {
+            document.getElementById('carrito').style.display = 'block';
+            actualizarCarrito();
+        }
+
+        // Agregar al carrito (si ya existe el producto, aumenta cantidad)
+        function agregarAlCarrito(id) {
+            const producto = productos.find(p => p.id === id);
+            const existente = carrito.find(item => item.id === id);
+
+            if (existente) {
+                existente.cantidad++;
+            } else {
+                carrito.push({
+                    id: producto.id,
+                    nombre: producto.nombre,
+                    precio: producto.precio,
+                    imagen: producto.imagen,
+                    cantidad: 1
+                });
+            }
+            actualizarCarrito();
+        }
+
+        // Eliminar un producto del carrito
+        function eliminarDelCarrito(id) {
+            carrito = carrito.filter(item => item.id !== id);
+            actualizarCarrito();
+        }
+
+        // Actualizar la vista del carrito
+        function actualizarCarrito() {
+            const contenedor = document.getElementById('productosCarrito');
+
+            if (carrito.length === 0) {
+                contenedor.innerHTML = '<p>Tu carrito está vacío.</p>';
+                return;
+            }
+
+            let total = 0;
+            let html = `
+                <table class="tabla-carrito">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Subtotal</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            carrito.forEach(item => {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                html += `
+                    <tr>
+                        <td>${item.nombre}</td>
+                        <td>${item.cantidad}</td>
+                        <td>$${item.precio}</td>
+                        <td>$${subtotal}</td>
+                        <td>
+                            <button class="btn-eliminar" onclick="eliminarDelCarrito(${item.id})">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+                <h3>Total: $${total}</h3>
+            `;
+
+            contenedor.innerHTML = html;
+        }
+
+        // Finalizar compra
+function finalizarCompra() {
+    if (carrito.length === 0) {
+        alert('Tu carrito está vacío.');
+        return;
+    }
+
+    generarFactura();   // genera la factura en otra pestaña
+
+    // Vaciar carrito después de generar factura
+    carrito = [];
+    actualizarCarrito();
+}
+
+function generarFactura() {
+    // Calcular total
+    const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+    const fecha = new Date().toLocaleString();
+
+    // Construir tabla de productos
+    let filas = '';
+    carrito.forEach(item => {
+        const subtotal = item.precio * item.cantidad;
+        filas += `
+            <tr>
+                <td>${item.nombre}</td>
+                <td>${item.cantidad}</td>
+                <td>$${item.precio}</td>
+                <td>$${subtotal}</td>
+            </tr>
+        `;
+    });
+
+    // Estructura de la factura en HTML
+    const facturaHTML = `
+        <html>
+        <head>
+            <title>Factura de compra</title>
+            <style>
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    padding: 20px;
+                    color: #333;
+                }
+                h1, h2 {
+                    text-align: center;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                }
+                th, td {
+                    border: 1px solid #ccc;
+                    padding: 8px;
+                    text-align: center;
+                }
+                th {
+                    background: #f0f0f0;
+                }
+                .total {
+                    text-align: right;
+                    margin-top: 20px;
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Tienda de Zapatos</h1>
+            <h2>Factura de Compra</h2>
+            <p><strong>Fecha:</strong> ${fecha}</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filas}
+                </tbody>
+            </table>
+            <p class="total">Total a pagar: $${total}</p>
+            <p>¡Gracias por su compra!</p>
+        </body>
+        </html>
+    `;
+
+    // Abrir en nueva pestaña
+    const ventanaFactura = window.open('', '_blank');
+    ventanaFactura.document.write(facturaHTML);
+    ventanaFactura.document.close();
+}
+
+
+        // Mostrar login / registro
+        function showLogin() {
+            document.getElementById('login').style.display = 'block';
+            document.getElementById('registro').style.display = 'none';
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('productos').style.display = 'none';
+            document.getElementById('carrito').style.display = 'none';
+        }
+
+        function showRegister() {
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('registro').style.display = 'block';
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('productos').style.display = 'none';
+            document.getElementById('carrito').style.display = 'none';
+        }
+
+        // LOGIN
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const usuario = document.getElementById('loginUsuario').value;
+            const contrasena = document.getElementById('loginContrasena').value;
+
+            if (usuario === 'alumno' && contrasena === '2025') {
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('home').style.display = 'block';
+            } else {
+                alert('Usuario o contraseña incorrectos');
+            }
+        });
+
+        // Registro (solo mensaje, no guarda aún)
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('Usuario registrado correctamente');
+            showLogin();
+        });
+    </script>
+
+</body>
+</html>
